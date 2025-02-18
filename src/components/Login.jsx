@@ -51,7 +51,7 @@ function Login({ setIsAuthenticated }) {
         </div>
       </form>
       <button>
-        No account? <Link to="/register">Register here</Link>
+        <Link to="/register">Register here</Link>
       </button>
     </div>
   );
