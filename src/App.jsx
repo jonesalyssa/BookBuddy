@@ -1,20 +1,77 @@
-import { useState } from 'react'
-import bookLogo from './assets/books.png'
+import { useState, useEffect } from "react";
+import { Provider } from "react-redux";
+import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
+import store from "./data/store";
+import Books from "./components/Books";
+import SingleBook from "./components/SingleBook";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import NavBar from "./components/Nav";
+import Checkout from "./components/Checkout";
+import Account from "./components/Account";
+import "./index.css";
+import booksImage from "./assets/books.png";
 
-function App() {
-  const [token, setToken] = useState(null)
+export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const authStatus = localStorage.getItem("isAuthenticated");
+    setIsAuthenticated(authStatus === "true");
+  }, []);
 
   return (
-    <>
-      <h1><img id='logo-image' src={bookLogo}/>Library App</h1>
-
-      <p>Complete the React components needed to allow users to browse a library catalog, check out books, review their account, and return books that they've finished reading.</p>
-
-      <p>You may need to use the `token` in this top-level component in other components that need to know if a user has logged in or not.</p>
-
-      <p>Don't forget to set up React Router to navigate between the different views of your single page application!</p>
-    </>
-  )
+    <Provider store={store}>
+      <Router>
+        <div>
+          <div className="header">
+            <h1>Book Buddy</h1>
+            <img src={booksImage} alt="Books" className="books-header-image" />
+          </div>
+          <NavBar />
+          <main>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  isAuthenticated ? (
+                    <Books />
+                  ) : (
+                    <Login setIsAuthenticated={setIsAuthenticated} />
+                  )
+                }
+              />
+              <Route
+                path="/login"
+                element={<Login setIsAuthenticated={setIsAuthenticated} />}
+              />
+              <Route path="/register" element={<Register />} />
+              <Route path="/books" element={<Books />} />
+              <Route path="/books/:id" element={<SingleBook />} />
+              <Route
+                path="/checkout"
+                element={
+                  isAuthenticated ? (
+                    <Checkout />
+                  ) : (
+                    <Login setIsAuthenticated={setIsAuthenticated} />
+                  )
+                }
+              />
+              <Route
+                path="/account"
+                element={
+                  isAuthenticated ? (
+                    <Account />
+                  ) : (
+                    <Login setIsAuthenticated={setIsAuthenticated} />
+                  )
+                }
+              />
+            </Routes>
+          </main>
+        </div>
+      </Router>
+    </Provider>
+  );
 }
-
-export default App
